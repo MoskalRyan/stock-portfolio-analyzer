@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import simpledialog
+from tkinter import messagebox
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
@@ -15,8 +17,8 @@ class Application:
             f"+{(root.winfo_screenheight() - 500) // 2}"
         )
 
-        self.optionmenu1_var = tk.StringVar()
-        self.optionmenu1_var.set("1D")
+        self.op_dataselecter_var = tk.StringVar()
+        self.op_dataselecter_var.set("1D")
 
         self.lb_portolio_value = tk.Label(root, text="Portfolio Value", font=("Helvetica", 8, "underline"))
         self.lb_portolio_value.place(x=117, y=25, width=80, height=20)
@@ -42,13 +44,17 @@ class Application:
         self.ch_portfolio.draw()
         self.ch_portfolio.get_tk_widget().place(x=120, y=80, width=490, height=160)
 
-        self.button1 = tk.Button(root, text="Add Stock", command=self.on_button1)
-        self.button1.place(x=129, y=249, width=68, height=30)
+        self.bt_add = tk.Button(root, text="Add Stock", command=self.on_bt_add)
+        self.bt_add.place(x=129, y=249, width=68, height=30)
 
-        self.button2 = tk.Button(root, text="Analyze Risk", command=self.on_button2)
-        self.button2.place(x=310, y=450, width=110, height=30)
+        self.bt_risk = tk.Button(root, text="Analyze Risk", command=self.on_bt_risk)
+        self.bt_risk.place(x=310, y=450, width=110, height=30)
 
         self.tr_Holdings = ttk.Treeview(root, columns=("col1", "col2", "col3", "col4"), show="headings")
+        self.tr_Holdings.column("col1", width=5, minwidth=5, stretch=True)
+        self.tr_Holdings.column("col2", width=5, minwidth=5, stretch=True)
+        self.tr_Holdings.column("col3", width=5, minwidth=5, stretch=True)
+        self.tr_Holdings.column("col4", width=5, minwidth=5, stretch=True)
         self.tr_Holdings.heading("col1", text="Stock")
         self.tr_Holdings.heading("col2", text="Shares")
         self.tr_Holdings.heading("col3", text="Value")
@@ -58,23 +64,32 @@ class Application:
         self.sb_holdings = tk.Scrollbar(root, orient="vertical")
         self.sb_holdings.place(x=589, y=290, width=20, height=150)
 
-        self.button3 = tk.Button(root, text="Remove Stock", command=self.on_button3)
-        self.button3.place(x=210, y=249, width=100, height=30)
+        self.bt_remove = tk.Button(root, text="Remove Stock", command=self.on_bt_remove)
+        self.bt_remove.place(x=210, y=249, width=100, height=30)
 
-        self.optionmenu1 = tk.OptionMenu(root, self.optionmenu1_var, "1D", "5D", "1M", "6M", "YTD", "1Y", "5Y", "Max")
-        self.optionmenu1.place(x=534, y=250, width=70, height=30)
+        self.op_dataselecter = tk.OptionMenu(root, self.op_dataselecter_var, "1D", "5D", "1M", "6M", "YTD", "1Y", "5Y", "Max")
+        self.op_dataselecter.place(x=534, y=250, width=70, height=30)
 
         self.sb_holdings.config(command=self.tr_Holdings.yview)
         self.tr_Holdings.config(yscrollcommand=self.sb_holdings.set)
 
-    def on_button1(self):
+    def on_bt_add(self):
+        ticker = simpledialog.askstring("Stock Ticker", "Stock Ticker")
+        shares = simpledialog.askinteger("Amount of Shares", "Number of Shares")
+        data_purchased = simpledialog.askinteger("Data Purchased", "Date Purchased, XX/XX/XXXX")
+        #place holder values
+        value = 0
+        calc_return = 0
+        self.tr_Holdings.insert("", "end", text=ticker, values=(ticker, shares, value, calc_return))
+
+
+    def on_bt_risk(self):
         pass
 
-    def on_button2(self):
-        pass
-
-    def on_button3(self):
-        pass
+    def on_bt_remove(self):
+        selected_stock = self.tr_Holdings.selection()
+        for values in selected_stock:
+            self.tr_Holdings.delete(values)
 
     def plot_ch_portfolio(self, x, y):
         """Redraw the chart from two equal-length sequences."""
