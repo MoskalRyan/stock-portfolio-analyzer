@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import simpledialog
-from tkinter import messagebox
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
@@ -76,7 +75,7 @@ class Application:
     def on_bt_add(self):
         ticker = simpledialog.askstring("Stock Ticker", "Stock Ticker")
         shares = simpledialog.askinteger("Amount of Shares", "Number of Shares")
-        data_purchased = simpledialog.askinteger("Data Purchased", "Date Purchased, XX/XX/XXXX")
+        data_purchased = simpledialog.askstring("Data Purchased", "Date Purchased, XX/XX/XXXX")
         #place holder values
         value = 0
         calc_return = 0
