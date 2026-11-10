@@ -73,13 +73,36 @@ class Application:
         self.tr_Holdings.config(yscrollcommand=self.sb_holdings.set)
 
     def on_bt_add(self):
-        ticker = simpledialog.askstring("Stock Ticker", "Stock Ticker")
-        shares = simpledialog.askinteger("Amount of Shares", "Number of Shares")
-        data_purchased = simpledialog.askstring("Data Purchased", "Date Purchased, XX/XX/XXXX")
-        #place holder values
-        value = 0
-        calc_return = 0
-        self.tr_Holdings.insert("", "end", text=ticker, values=(ticker, shares, value, calc_return))
+        new_window = tk.Tk()
+        new_window.title("Stock Entry")
+        new_window.geometry("300x191")
+
+        lb_ticker = tk.Label(new_window, text="Ticker:")
+        lb_ticker.place(x=60, y=16, width=90, height=26)
+        lb_shares = tk.Label(new_window, text="Shares:")
+        lb_shares.place(x=60, y=68, width=90, height=26)
+        lb_date_purchased = tk.Label(new_window, text="Date Purchased:")
+        lb_date_purchased.place(x=20, y=117, width=110, height=30)
+
+        en_ticker = tk.Entry(new_window)
+        en_ticker.place(x=130, y=14, width=150, height=28)
+        en_shares = tk.Entry(new_window)
+        en_shares.place(x=130, y=67, width=150, height=28)
+        en_date_purchased = tk.Entry(new_window)
+        en_date_purchased.place(x=130, y=117, width=150, height=28)
+
+        def on_bt_enter():
+            ticker = en_ticker.get()
+            shares = en_shares.get()
+            date_purchased = en_date_purchased.get()
+            value = 0
+            calc_return = 0
+            self.tr_Holdings.insert("", "end", text=ticker, values=(ticker, shares, value, calc_return))
+            new_window.destroy()
+
+        bt_enter = tk.Button(new_window, text="Enter", command=on_bt_enter)
+        bt_enter.place(x=102, y=152, width=95, height=32)
+
 
 
     def on_bt_risk(self):
