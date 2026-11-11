@@ -158,10 +158,11 @@ class Application:
 
     def on_bt_remove(self):
         selected_stock = self.tr_Holdings.selection()
-        values = self.tr_Holdings.item(selected_stock[0], "values")
+        stock_to_delete = self.tr_Holdings.item(selected_stock[0], "values")
         for values in selected_stock:
             self.tr_Holdings.delete(values)
-        remove_stock(values[0])
+        remove_stock(stock_to_delete[0])
+
 
     def plot_ch_portfolio(self, x, y):
         """Redraw the chart from two equal-length sequences."""
