@@ -1,8 +1,35 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter import simpledialog
+from tkinter import messagebox
 from matplotlib.figure import Figure
+from datetime import datetime
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
+def validate_stock_entry(ticker, shares, date_purchased) -> str | None:
+    cleaned_ticker = ticker.strip()
+    cleaned_shares = shares.strip()
+    cleaned_date_purchased = date_purchased.strip()
+
+    try:
+        float(cleaned_shares)
+    except ValueError:
+        return "Enter a valid amount of Shares"
+
+    try:
+        date = datetime.strptime(cleaned_date_purchased, "%m/%d/%Y")
+    except ValueError:
+        return "Enter a valid date"
+
+    if len(cleaned_ticker) == 0 or not cleaned_ticker.isalpha():
+        return "Enter a valid ticker"
+    elif len(cleaned_shares) == 0:
+        return "Shares are required"
+    elif date.date() > datetime.today().date():
+        return "Enter a valid date"
+    else:
+        return None
+    
+
 
 
 class Application:
@@ -95,9 +122,13 @@ class Application:
             ticker = en_ticker.get()
             shares = en_shares.get()
             date_purchased = en_date_purchased.get()
+            if validate_stock_entry(ticker, shares, date_purchased) is not None:
+                return messagebox.showerror("Invalid Ticket", validate_stock_entry(ticker, shares, date_purchased))
+
             value = 0
             calc_return = 0
             self.tr_Holdings.insert("", "end", text=ticker, values=(ticker, shares, value, calc_return))
+
             new_window.destroy()
 
         bt_enter = tk.Button(new_window, text="Enter", command=on_bt_enter)
