@@ -35,7 +35,7 @@ def remove_stock(stock_to_delete: str):
         """
         DELETE FROM stocks WHERE id = ?
         """,
-        (stock_to_delete,)
+        (stock_to_delete)
     )
     conn.commit()
     conn.close()
