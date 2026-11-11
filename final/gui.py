@@ -4,6 +4,7 @@ from tkinter import messagebox
 from matplotlib.figure import Figure
 from datetime import datetime
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from database import add_stock, get_stock, get_stocks, remove_stock, update_stock
 
 def validate_stock_entry(ticker, shares, date_purchased) -> str | None:
     cleaned_ticker = ticker.strip()
@@ -28,9 +29,6 @@ def validate_stock_entry(ticker, shares, date_purchased) -> str | None:
         return "Enter a valid date"
     else:
         return None
-    
-
-
 
 class Application:
     def __init__(self, root):
@@ -98,32 +96,51 @@ class Application:
 
         self.sb_holdings.config(command=self.tr_Holdings.yview)
         self.tr_Holdings.config(yscrollcommand=self.sb_holdings.set)
+        self.load_stocks()
+
+    def load_stocks(self):
+        stocks = get_stocks()
+        for stock in stocks:
+            self.tr_Holdings.insert("", "end", values=stock)
 
     def on_bt_add(self):
         new_window = tk.Tk()
         new_window.title("Stock Entry")
-        new_window.geometry("300x191")
+        new_window.geometry("300x241")
 
         lb_ticker = tk.Label(new_window, text="Ticker:")
         lb_ticker.place(x=60, y=16, width=90, height=26)
+
         lb_shares = tk.Label(new_window, text="Shares:")
         lb_shares.place(x=60, y=68, width=90, height=26)
+
+        lb_purchase_price = tk.Label(new_window, text="Purchase Price:")
+        lb_purchase_price.place(x=20, y=117, width=110, height=30)
+
         lb_date_purchased = tk.Label(new_window, text="Date Purchased:")
-        lb_date_purchased.place(x=20, y=117, width=110, height=30)
+        lb_date_purchased.place(x=20, y=167, width=110, height=30)
+
 
         en_ticker = tk.Entry(new_window)
         en_ticker.place(x=130, y=14, width=150, height=28)
+
         en_shares = tk.Entry(new_window)
         en_shares.place(x=130, y=67, width=150, height=28)
+
+        en_purchase_price = tk.Entry(new_window)
+        en_purchase_price.place(x=130, y=117, width=150, height=28)
+
         en_date_purchased = tk.Entry(new_window)
-        en_date_purchased.place(x=130, y=117, width=150, height=28)
+        en_date_purchased.place(x=130, y=167, width=150, height=28)
 
         def on_bt_enter():
             ticker = en_ticker.get()
             shares = en_shares.get()
+            purchase_price = en_purchase_price.get()
             date_purchased = en_date_purchased.get()
             if validate_stock_entry(ticker, shares, date_purchased) is not None:
                 return messagebox.showerror("Invalid Ticket", validate_stock_entry(ticker, shares, date_purchased))
+            add_stock(ticker, shares, purchase_price, date_purchased)
 
             value = 0
             calc_return = 0
@@ -132,7 +149,7 @@ class Application:
             new_window.destroy()
 
         bt_enter = tk.Button(new_window, text="Enter", command=on_bt_enter)
-        bt_enter.place(x=102, y=152, width=95, height=32)
+        bt_enter.place(x=102, y=200, width=95, height=32)
 
 
 
@@ -143,6 +160,9 @@ class Application:
         selected_stock = self.tr_Holdings.selection()
         for values in selected_stock:
             self.tr_Holdings.delete(values)
+
+        
+        remove_stock(selected_stock[0])
 
     def plot_ch_portfolio(self, x, y):
         """Redraw the chart from two equal-length sequences."""
