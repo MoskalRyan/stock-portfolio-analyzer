@@ -101,7 +101,7 @@ class Application:
     def load_stocks(self):
         stocks = get_stocks()
         for stock in stocks:
-            self.tr_Holdings.insert("", "end", values=stock)
+            self.tr_Holdings.insert("", "end", values=stock[1:3:1])
 
     def on_bt_add(self):
         new_window = tk.Tk()
