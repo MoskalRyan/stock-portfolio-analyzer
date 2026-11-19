@@ -170,9 +170,3 @@ class Application:
         self.ch_portfolio_axes.plot(x, y)
         self.ch_portfolio_axes.set_title("Portfolio Value Over Time")
         self.ch_portfolio.draw()
-
-    def load_tr_Holdings(self, rows):
-        """Populate the table — pass any iterable of row tuples/lists."""
-        self.tr_Holdings.delete(*self.tr_Holdings.get_children())
-        for values in rows:
-            self.tr_Holdings.insert("", "end", values=values)
